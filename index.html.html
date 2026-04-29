@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Nishtha Shukla — AI/ML Engineer</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #16161f;
+    --accent: #7c6cfa;
+    --accent2: #4ecdc4;
+    --accent3: #ff6b6b;
+    --text: #e8e8f0;
+    --muted: #6b6b7f;
+    --border: rgba(124,108,250,0.15);
+    --card: rgba(22,22,31,0.8);
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed;
+    width: 10px; height: 10px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s, width 0.3s, height 0.3s, background 0.3s;
+    mix-blend-mode: screen;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1px solid rgba(124,108,250,0.5);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.15s ease-out, width 0.3s, height 0.3s;
+  }
+
+  /* Navbar */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.4rem 3rem;
+    z-index: 100;
+    backdrop-filter: blur(18px);
+    background: rgba(10,10,15,0.6);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: var(--font-head);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  /* Hero */
+  #hero {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+  #canvas-hero {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 0 5rem;
+    max-width: 900px;
+  }
+  .hero-tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    padding: 0.4rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    background: rgba(124,108,250,0.08);
+  }
+  .hero-name {
+    font-family: var(--font-head);
+    font-size: clamp(3.5rem, 8vw, 7rem);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.3rem;
+  }
+  .hero-name .accent { color: var(--accent); }
+  .hero-name .accent2 { color: var(--accent2); }
+  .hero-sub {
+    font-size: 1.1rem;
+    color: var(--muted);
+    margin-bottom: 2.5rem;
+    font-weight: 300;
+    letter-spacing: 0.03em;
+  }
+  .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn {
+    padding: 0.8rem 2rem;
+    border-radius: 100px;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: all 0.3s;
+    display: inline-block;
+    cursor: none;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border: 1px solid var(--accent);
+  }
+  .btn-primary:hover {
+    background: transparent;
+    color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px rgba(124,108,250,0.3);
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .btn-secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  /* Scroll indicator */
+  .scroll-hint {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 5rem;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .scroll-line {
+    width: 40px;
+    height: 1px;
+    background: var(--muted);
+    position: relative;
+    overflow: hidden;
+  }
+  .scroll-line::after {
+    content: '';
+    position: absolute;
+    left: -100%;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--accent);
+    animation: scrollline 2s ease-in-out infinite;
+  }
+  @keyframes scrollline {
+    0% { left: -100%; }
+    50% { left: 0; }
+    100% { left: 100%; }
+  }
+
+  /* Sections */
+  section {
+    padding: 7rem 5rem;
+    position: relative;
+  }
+  .section-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+  }
+  .section-title {
+    font-family: var(--font-head);
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 4rem;
+  }
+  .section-title span { color: var(--accent2); }
+
+  /* About */
+  #about {
+    background: var(--bg2);
+  }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 5rem;
+    align-items: start;
+  }
+  .about-photo-wrap {
+    position: relative;
+  }
+  .about-photo {
+    width: 100%;
+    aspect-ratio: 3/4;
+    object-fit: cover;
+    border-radius: 1.5rem;
+    display: block;
+    filter: grayscale(20%);
+    transition: filter 0.5s;
+  }
+  .about-photo:hover { filter: grayscale(0%); }
+  .about-photo-wrap::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 1.6rem;
+    background: linear-gradient(135deg, var(--accent), var(--accent2), transparent);
+    z-index: -1;
+    padding: 2px;
+  }
+  .about-photo-wrap::after {
+    content: '';
+    position: absolute;
+    bottom: -2rem;
+    right: -2rem;
+    width: 120px;
+    height: 120px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: rgba(124,108,250,0.05);
+  }
+  .about-text p {
+    font-size: 1.05rem;
+    color: rgba(232,232,240,0.75);
+    line-height: 1.85;
+    margin-bottom: 1.5rem;
+  }
+  .about-text p strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+  .about-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+  }
+  .stat-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 1.25rem 1.5rem;
+  }
+  .stat-num {
+    font-family: var(--font-head);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 0.35rem;
+    letter-spacing: 0.04em;
+  }
+
+  /* Skills */
+  #skills { background: var(--bg); }
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+  .skill-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 1.25rem;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+  }
+  .skill-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(124,108,250,0.4);
+    box-shadow: 0 20px 60px rgba(124,108,250,0.1);
+  }
+  .skill-icon {
+    width: 46px; height: 46px;
+    background: rgba(124,108,250,0.1);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+  .skill-card h3 {
+    font-family: var(--font-head);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .skill-card p {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+  .tag {
+    font-size: 0.72rem;
+    padding: 0.3rem 0.75rem;
+    border-radius: 100px;
+    background: rgba(124,108,250,0.1);
+    color: var(--accent);
+    border: 1px solid rgba(124,108,250,0.2);
+    letter-spacing: 0.04em;
+  }
+
+  /* Experience */
+  #experience { background: var(--bg2); }
+  .timeline { position: relative; padding-left: 2rem; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--accent), var(--accent2), transparent);
+  }
+  .timeline-item {
+    position: relative;
+    padding: 0 0 3.5rem 2.5rem;
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -5px; top: 6px;
+    width: 10px; height: 10px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(124,108,250,0.5);
+  }
+  .timeline-date {
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .timeline-title {
+    font-family: var(--font-head);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+  .timeline-company {
+    font-size: 0.875rem;
+    color: var(--muted);
+    margin-bottom: 1rem;
+    font-style: italic;
+  }
+  .timeline-desc {
+    font-size: 0.9rem;
+    color: rgba(232,232,240,0.65);
+    line-height: 1.75;
+  }
+  .timeline-desc li { margin-bottom: 0.4rem; list-style: none; padding-left: 1.2em; position: relative; }
+  .timeline-desc li::before { content: '→'; position: absolute; left: 0; color: var(--accent2); font-size: 0.75em; top: 0.15em; }
+
+  /* Projects */
+  #projects { background: var(--bg); }
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+  }
+  .project-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 1.5rem;
+    padding: 2.5rem;
+    backdrop-filter: blur(10px);
+    transition: transform 0.4s cubic-bezier(.25,.8,.25,1), box-shadow 0.4s;
+    position: relative;
+    overflow: hidden;
+  }
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transform: scaleX(0);
+    transition: transform 0.4s;
+    transform-origin: left;
+  }
+  .project-card:hover::before { transform: scaleX(1); }
+  .project-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+    border-color: rgba(124,108,250,0.3);
+  }
+  .project-num {
+    font-family: var(--font-head);
+    font-size: 3rem;
+    font-weight: 800;
+    color: rgba(124,108,250,0.1);
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+  .project-card h3 {
+    font-family: var(--font-head);
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+  }
+  .project-card p {
+    font-size: 0.875rem;
+    color: rgba(232,232,240,0.6);
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Education */
+  #education { background: var(--bg2); }
+  .edu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  .edu-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 1.25rem;
+    padding: 2rem;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .edu-card:hover {
+    border-color: rgba(78,205,196,0.4);
+    transform: translateY(-4px);
+  }
+  .edu-year {
+    font-size: 0.72rem;
+    color: var(--accent2);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+  .edu-degree {
+    font-family: var(--font-head);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    line-height: 1.3;
+  }
+  .edu-institution {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  /* Contact */
+  #contact {
+    background: var(--bg);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  #canvas-contact {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.5;
+  }
+  .contact-content { position: relative; z-index: 2; }
+  .contact-email {
+    font-family: var(--font-head);
+    font-size: clamp(1.5rem, 4vw, 3rem);
+    font-weight: 700;
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.2rem;
+    transition: color 0.3s;
+    display: inline-block;
+    margin-bottom: 3rem;
+  }
+  .contact-email:hover { color: var(--accent); }
+  .contact-links {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 0.6rem 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    transition: all 0.3s;
+    letter-spacing: 0.05em;
+  }
+  .contact-link:hover {
+    color: var(--text);
+    border-color: var(--accent);
+    background: rgba(124,108,250,0.08);
+  }
+
+  /* Footer */
+  footer {
+    padding: 2rem 5rem;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  /* Fade in animation */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .fade-in.visible {
+    opacity: 1;
+    transform: none;
+  }
+  .fade-in:nth-child(2) { transition-delay: 0.15s; }
+  .fade-in:nth-child(3) { transition-delay: 0.3s; }
+  .fade-in:nth-child(4) { transition-delay: 0.45s; }
+
+  /* Hero text animation */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: none; }
+  }
+  .hero-tag { animation: fadeUp 0.8s ease 0.2s both; }
+  .hero-name { animation: fadeUp 0.8s ease 0.4s both; }
+  .hero-sub { animation: fadeUp 0.8s ease 0.6s both; }
+  .hero-ctas { animation: fadeUp 0.8s ease 0.8s both; }
+  .scroll-hint { animation: fadeUp 0.8s ease 1s both; }
+
+  @media (max-width: 768px) {
+    nav { padding: 1.2rem 1.5rem; }
+    .nav-links { gap: 1.5rem; }
+    section { padding: 5rem 1.5rem; }
+    .hero-content { padding: 0 1.5rem; }
+    .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+    footer { padding: 1.5rem; flex-direction: column; gap: 0.5rem; text-align: center; }
+    .scroll-hint { left: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Nav -->
+<nav>
+  <a href="#hero" class="nav-logo">nishtha<span>.dev</span></a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">Work</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- Hero -->
+<section id="hero">
+  <canvas id="canvas-hero"></canvas>
+  <div class="hero-content">
+    <div class="hero-tag">✦ Aspiring AI/ML Engineer</div>
+    <h1 class="hero-name">
+      <span class="accent">Nishtha</span><br>
+      <span class="accent2">Shukla</span>
+    </h1>
+    <p class="hero-sub">Building intelligent systems · Passionate about AI &amp; real-world impact</p>
+    <div class="hero-ctas">
+      <a href="#projects" class="btn btn-primary">View Work</a>
+      <a href="#contact" class="btn btn-secondary">Get in Touch</a>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span class="scroll-line"></span>
+    Scroll to explore
+  </div>
+</section>
+
+<!-- About -->
+<section id="about">
+  <p class="section-label fade-in">01 / About me</p>
+  <h2 class="section-title fade-in">Who I <span>am</span></h2>
+  <div class="about-grid">
+    <div class="about-photo-wrap fade-in">
+      <!-- Replace the src below with your actual photo path once deployed -->
+      <img class="about-photo" src="photo.jpg" alt="Nishtha Shukla"
+        onerror="this.style.background='linear-gradient(135deg,#7c6cfa,#4ecdc4)';this.style.minHeight='400px';this.removeAttribute('src')" />
+    </div>
+    <div class="about-text">
+      <p class="fade-in">
+        Hi! I'm <strong>Nishtha Shukla</strong>, a second-year B.Tech Computer Science student at JECRC University, Jaipur, pursuing a Minor in Data Science (AI/ML) from IIT Mandi.
+      </p>
+      <p class="fade-in">
+        I'm passionate about building <strong>real-world AI-powered applications</strong> — from computer vision tools to web-based ML systems. I believe technology should solve human problems, and I'm on a mission to make that happen.
+      </p>
+      <p class="fade-in">
+        Beyond code, I've worked as an Operations Customer Expert at Teleperformance, which sharpened my <strong>communication, adaptability, and team collaboration</strong>. I also love hosting events and leading teams as a PR at JU Verse.
+      </p>
+      <div class="about-stats">
+        <div class="stat-card fade-in">
+          <div class="stat-num">2nd</div>
+          <div class="stat-label">Year B.Tech Student</div>
+        </div>
+        <div class="stat-card fade-in">
+          <div class="stat-num">IIT</div>
+          <div class="stat-label">Mandi Minor — AI/ML</div>
+        </div>
+        <div class="stat-card fade-in">
+          <div class="stat-num">AI</div>
+          <div class="stat-label">Powered App Developer</div>
+        </div>
+        <div class="stat-card fade-in">
+          <div class="stat-num">PR</div>
+          <div class="stat-label">JU Verse Event Host</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Skills -->
+<section id="skills">
+  <p class="section-label fade-in">02 / What I know</p>
+  <h2 class="section-title fade-in">Skills &amp; <span>Toolbox</span></h2>
+  <div class="skills-grid">
+    <div class="skill-card fade-in">
+      <div class="skill-icon">🐍</div>
+      <h3>Python Programming</h3>
+      <p>Core language for AI/ML development, scripting, and data processing workflows.</p>
+      <div class="skill-tags">
+        <span class="tag">Python</span>
+        <span class="tag">Scripting</span>
+        <span class="tag">Automation</span>
+      </div>
+    </div>
+    <div class="skill-card fade-in">
+      <div class="skill-icon">🤖</div>
+      <h3>AI / Machine Learning</h3>
+      <p>Hands-on with AI tools, computer vision, face detection, and model integration.</p>
+      <div class="skill-tags">
+        <span class="tag">Computer Vision</span>
+        <span class="tag">AI Tools</span>
+        <span class="tag">ML Concepts</span>
+      </div>
+    </div>
+    <div class="skill-card fade-in">
+      <div class="skill-icon">💻</div>
+      <h3>C Programming</h3>
+      <p>Solid foundation in systems programming, memory management, and logic building.</p>
+      <div class="skill-tags">
+        <span class="tag">C</span>
+        <span class="tag">Algorithms</span>
+        <span class="tag">Data Structures</span>
+      </div>
+    </div>
+    <div class="skill-card fade-in">
+      <div class="skill-icon">🌐</div>
+      <h3>Web Development</h3>
+      <p>Building web-based interfaces and AI-powered apps with modern tooling.</p>
+      <div class="skill-tags">
+        <span class="tag">HTML/CSS</span>
+        <span class="tag">JavaScript</span>
+        <span class="tag">Web Apps</span>
+      </div>
+    </div>
+    <div class="skill-card fade-in">
+      <div class="skill-icon">🎯</div>
+      <h3>Soft Skills</h3>
+      <p>Strong communicator, multitasker, and natural leader with customer-facing experience.</p>
+      <div class="skill-tags">
+        <span class="tag">Leadership</span>
+        <span class="tag">Communication</span>
+        <span class="tag">Adaptability</span>
+      </div>
+    </div>
+    <div class="skill-card fade-in">
+      <div class="skill-icon">📊</div>
+      <h3>Data Science</h3>
+      <p>Fundamentals in data analysis, statistics, and AI/ML through IIT Mandi's program.</p>
+      <div class="skill-tags">
+        <span class="tag">Data Analysis</span>
+        <span class="tag">Statistics</span>
+        <span class="tag">Visualization</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Experience -->
+<section id="experience">
+  <p class="section-label fade-in">03 / Experience</p>
+  <h2 class="section-title fade-in">Where I've <span>worked</span></h2>
+  <div class="timeline">
+    <div class="timeline-item fade-in">
+      <div class="timeline-date">Jul 2025 – Sep 2025 · Jaipur, India</div>
+      <div class="timeline-title">Operations Customer Expert</div>
+      <div class="timeline-company">Teleperformance</div>
+      <ul class="timeline-desc">
+        <li>Handled customer queries and resolved issues efficiently ensuring high satisfaction and policy adherence.</li>
+        <li>Collaborated with team members to solve complex issues quickly and smoothly under pressure.</li>
+        <li>Worked with internal departments to resolve escalated concerns and improve workflow processes.</li>
+      </ul>
+    </div>
+    <div class="timeline-item fade-in">
+      <div class="timeline-date">Ongoing · Jaipur, India</div>
+      <div class="timeline-title">PR Lead &amp; Event Host</div>
+      <div class="timeline-company">JU Verse, JECRC University</div>
+      <ul class="timeline-desc">
+        <li>Worked as a Public Relations lead and hosted multiple college events.</li>
+        <li>Managed communications, team coordination, and event logistics.</li>
+      </ul>
+    </div>
+    <div class="timeline-item fade-in">
+      <div class="timeline-date">2025 · Jaipur, India</div>
+      <div class="timeline-title">Volunteer</div>
+      <div class="timeline-company">IPL 2025 · Annual Sports Day, JECRC</div>
+      <ul class="timeline-desc">
+        <li>Volunteered at IPL 2025 and the university Annual Sports Day events.</li>
+        <li>Assisted with crowd management, coordination, and participant support.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Projects -->
+<section id="projects">
+  <p class="section-label fade-in">04 / Projects</p>
+  <h2 class="section-title fade-in">What I've <span>built</span></h2>
+  <div class="projects-grid">
+    <div class="project-card fade-in">
+      <div class="project-num">01</div>
+      <h3>AI Passport Photo Generator &amp; Background Remover</h3>
+      <p>A web-based AI application that automatically detects faces, crops, and removes backgrounds to generate official-format passport photos. Built using computer vision and AI tools.</p>
+      <div class="skill-tags">
+        <span class="tag">Python</span>
+        <span class="tag">Computer Vision</span>
+        <span class="tag">AI/ML</span>
+        <span class="tag">Web App</span>
+      </div>
+    </div>
+    <div class="project-card fade-in" style="border-style: dashed; opacity: 0.7;">
+      <div class="project-num">02</div>
+      <h3>More coming soon...</h3>
+      <p>Currently working on new AI/ML projects. Stay tuned for updates on data science experiments and intelligent web applications.</p>
+      <div class="skill-tags">
+        <span class="tag">In Progress</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Education -->
+<section id="education">
+  <p class="section-label fade-in">05 / Education</p>
+  <h2 class="section-title fade-in">Where I <span>learned</span></h2>
+  <div class="edu-grid">
+    <div class="edu-card fade-in">
+      <div class="edu-year">2024 – 2028</div>
+      <div class="edu-degree">B.Tech, Computer Science &amp; Engineering</div>
+      <div class="edu-institution">JECRC University, Jaipur</div>
+    </div>
+    <div class="edu-card fade-in">
+      <div class="edu-year">2024 – 2025</div>
+      <div class="edu-degree">Minor in Data Science (AI/ML)</div>
+      <div class="edu-institution">Indian Institute of Technology, Mandi</div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section id="contact">
+  <canvas id="canvas-contact"></canvas>
+  <div class="contact-content">
+    <p class="section-label fade-in">06 / Get in touch</p>
+    <h2 class="section-title fade-in" style="margin-bottom:2rem;">Let's <span>connect</span></h2>
+    <p class="fade-in" style="color:var(--muted);margin-bottom:2rem;font-size:1rem;">
+      Open to internships, collaborations, and interesting AI/ML opportunities.
+    </p>
+    <a href="mailto:nishthas615@gmail.com" class="contact-email fade-in">nishthas615@gmail.com</a>
+    <div class="contact-links fade-in">
+      <a href="https://linkedin.com" class="contact-link" target="_blank">
+        <span>↗</span> LinkedIn
+      </a>
+      <a href="https://github.com" class="contact-link" target="_blank">
+        <span>↗</span> GitHub
+      </a>
+      <a href="tel:+919340370626" class="contact-link">
+        <span>📞</span> +91 93403 70626
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <span>© 2026 Nishtha Shukla</span>
+  <span>Built with ♥ &amp; Three.js</span>
+</footer>
+
+<script>
+// Cursor
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx + 'px';
+  cursor.style.top = my + 'px';
+});
+function animRing() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) *.12;
+  ring.style.left = rx + 'px';
+  ring.style.top = ry + 'px';
+  requestAnimationFrame(animRing);
+}
+animRing();
+document.querySelectorAll('a, button').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    cursor.style.width = '20px';
+    cursor.style.height = '20px';
+    cursor.style.background = '#4ecdc4';
+  });
+  el.addEventListener('mouseleave', () => {
+    cursor.style.width = '10px';
+    cursor.style.height = '10px';
+    cursor.style.background = 'var(--accent)';
+  });
+});
+
+// Scroll fade in
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+
+// ——— THREE.JS HERO WAVES ———
+(function() {
+  const canvas = document.getElementById('canvas-hero');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
+  camera.position.set(0, 2, 6);
+  camera.lookAt(0, 0, 0);
+
+  const cols = 80, rows = 40;
+  const geom = new THREE.PlaneGeometry(20, 10, cols - 1, rows - 1);
+  geom.rotateX(-Math.PI * 0.35);
+
+  const mat = new THREE.ShaderMaterial({
+    uniforms: {
+      uTime: { value: 0 },
+      uColor1: { value: new THREE.Color(0x7c6cfa) },
+      uColor2: { value: new THREE.Color(0x4ecdc4) },
+      uColor3: { value: new THREE.Color(0xff6b6b) },
+    },
+    vertexShader: `
+      uniform float uTime;
+      varying vec2 vUv;
+      varying float vElevation;
+      void main() {
+        vUv = uv;
+        vec4 mp = modelMatrix * vec4(position, 1.0);
+        float el = sin(mp.x * 0.6 + uTime * 0.6) * 0.3
+                 + sin(mp.x * 1.2 + uTime * 0.9) * 0.15
+                 + sin(mp.z * 0.8 + uTime * 0.5) * 0.2
+                 + sin(mp.x * 0.4 + mp.z * 0.6 + uTime * 0.7) * 0.1;
+        mp.y += el;
+        vElevation = el;
+        gl_Position = projectionMatrix * viewMatrix * mp;
+      }
+    `,
+    fragmentShader: `
+      uniform vec3 uColor1;
+      uniform vec3 uColor2;
+      uniform vec3 uColor3;
+      varying vec2 vUv;
+      varying float vElevation;
+      void main() {
+        float t = vUv.x;
+        vec3 col = mix(uColor1, uColor2, t);
+        col = mix(col, uColor3, vUv.y * 0.4);
+        float alpha = (vElevation + 0.5) * 0.25 + 0.05;
+        gl_FragColor = vec4(col, alpha);
+      }
+    `,
+    transparent: true,
+    wireframe: true,
+    depthWrite: false,
+  });
+
+  const mesh = new THREE.Mesh(geom, mat);
+  scene.add(mesh);
+
+  // Floating particles
+  const pCount = 60;
+  const pGeom = new THREE.BufferGeometry();
+  const pPos = new Float32Array(pCount * 3);
+  for (let i = 0; i < pCount; i++) {
+    pPos[i*3]   = (Math.random() - 0.5) * 20;
+    pPos[i*3+1] = (Math.random() - 0.5) * 8;
+    pPos[i*3+2] = (Math.random() - 0.5) * 10;
+  }
+  pGeom.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+  const pMat = new THREE.PointsMaterial({ color: 0x7c6cfa, size: 0.04, transparent: true, opacity: 0.6 });
+  scene.add(new THREE.Points(pGeom, pMat));
+
+  let mouse = { x: 0, y: 0 };
+  document.addEventListener('mousemove', e => {
+    mouse.x = (e.clientX / window.innerWidth - 0.5) * 2;
+    mouse.y = -(e.clientY / window.innerHeight - 0.5) * 2;
+  });
+
+  const clock = new THREE.Clock();
+  function animate() {
+    const t = clock.getElapsedTime();
+    mat.uniforms.uTime.value = t;
+    camera.position.x += (mouse.x * 0.5 - camera.position.x) * 0.03;
+    camera.position.y += (mouse.y * 0.3 + 2 - camera.position.y) * 0.03;
+    camera.lookAt(0, 0, 0);
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+  }
+  animate();
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+})();
+
+// ——— THREE.JS CONTACT MINI SCENE ———
+(function() {
+  const canvas = document.getElementById('canvas-contact');
+  const section = document.getElementById('contact');
+  const w = section.offsetWidth, h = section.offsetHeight || 400;
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(w, h);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(70, w / h, 0.1, 50);
+  camera.position.z = 4;
+
+  const count = 120;
+  const geom = new THREE.BufferGeometry();
+  const pos = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    const theta = Math.random() * Math.PI * 2;
+    const r = 1.5 + Math.random() * 2;
+    pos[i*3] = Math.cos(theta) * r;
+    pos[i*3+1] = (Math.random() - 0.5) * 3;
+    pos[i*3+2] = Math.sin(theta) * r;
+  }
+  geom.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const mat = new THREE.PointsMaterial({ color: 0x4ecdc4, size: 0.05, transparent: true, opacity: 0.5 });
+  const pts = new THREE.Points(geom, mat);
+  scene.add(pts);
+
+  const clock = new THREE.Clock();
+  function animate() {
+    const t = clock.getElapsedTime();
+    pts.rotation.y = t * 0.1;
+    pts.rotation.x = Math.sin(t * 0.3) * 0.2;
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+</script>
+</body>
+</html>
